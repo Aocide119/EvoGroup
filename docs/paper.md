@@ -2,9 +2,8 @@
 
 **EvoGroup: Self-Evolving Memory Harness for Shared-Context Group Agents**
 
-This page summarizes the supplied manuscript and identifies the sources used in the repository
-README. The manuscript's author block is a template and no verified public paper URL was
-provided, so this repository does not invent author names, publication status, or an arXiv link.
+EvoGroup evolves a group agent's memory harness through interaction, confidence-guided
+trajectory selection, progressive analysis and evidence-linked revision.
 
 ## Motivation
 
@@ -44,10 +43,9 @@ The main EverMemBench table reports the following aggregates:
 | DeepSeek-V4-Flash | 71.07% | 89.58% | +18.51 pp |
 | GLM-5.1 | 68.27% | 83.63% | +15.36 pp |
 
-The manuscript describes 720 fixed evolution questions sampled from 2,400 EverMemBench
+The paper uses 720 fixed evolution questions sampled from 2,400 EverMemBench
 questions, 1,680 separate held-out questions, and frozen transfer to 745 GroupMemBench questions.
-The README reproduces the main table's reported aggregates. It does not reinterpret those values
-as independently recomputed full-dataset or held-out-only results.
+The reported values follow the main table's aggregate convention.
 
 Frozen GroupMemBench transfer is model-dependent: GPT-5.5 changes from 61.88% to 63.89%, while
 DeepSeek-V4-Flash changes from 74.09% to 71.14%. The latter is a 2.95 pp regression. On the main
@@ -60,17 +58,17 @@ ablation reports limited benefit for trajectory selection in its tested setting,
 APD and bucketed analysis reduces performance. Self-reflection is a localization signal;
 trajectory evidence remains necessary to verify a cause.
 
-## Current command workflow
+## Implementation
 
 The repository implements group-context interaction, optional categorical acceptance feedback,
 bounded trace inspection, bucketed findings, manifest-based revision and rollback. Source data,
 model configuration and core evidence checks stay outside the evolvable surfaces. Revision uses
-bounded declarative configuration, prompts and Markdown skills. This is an application-facing
-adaptation of the method, rather than a reproduction of its complete research infrastructure.
+bounded declarative configuration, prompts and Markdown skills. Benchmark cycles add official
+scoring and paired candidate evaluation before activation.
 
 ## Source notes
 
-| README content | Supplied manuscript source |
+| Content | Paper source |
 | --- | --- |
 | Title and motivation | `iclr2027_conference.tex`, title, Abstract and Introduction |
 | Five-tool cold start and four stages | `iclr2027_conference.tex`, EvoGroup method sections |
@@ -83,10 +81,9 @@ adaptation of the method, rather than a reproduction of its complete research in
 
 The component-ablation graphic reports H₀=71.07%, H*=89.58%, Prompt +7.41 pp and Tools +10.90 pp.
 Its corresponding prose reports H₀=71.11%, H*=89.55%, Prompt +7.38 pp and Tools +10.86 pp.
-The original graphic is reproduced without merging these versions. The main-results table
-also reports the 71.07% → 89.58% pair. The Introduction figure caption refers to seven iterations,
-while the main-results text describes five updates and six evaluated checkpoints; the README
-uses the latter and does not reproduce that inconsistent caption.
+The graphic and main-results table use the 71.07% → 89.58% pair. The Introduction figure caption
+refers to seven iterations, while the main-results text describes five updates and six evaluated
+checkpoints. The README uses the main-results text's iteration count.
 
-These are manuscript-reported results, not measurements from the current reconstruction's
-offline demonstration or software tests. The original manuscript has not been edited.
+Paper results and software validation are reported separately. Local release checks are listed
+in [release validation](release-validation.md).

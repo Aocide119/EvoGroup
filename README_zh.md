@@ -6,7 +6,7 @@
 
 **交互 · 分析 · 演化**
 
-<a href="docs/paper.md"><img alt="论文" src="https://img.shields.io/badge/Paper-Manuscript-b31b1b?style=flat"></a>
+<a href="docs/paper.md"><img alt="论文" src="https://img.shields.io/badge/Paper-EvoGroup-b31b1b?style=flat"></a>
 <a href="LICENSE"><img alt="许可" src="https://img.shields.io/badge/License-MIT-22c55e?style=flat"></a>
 <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3b82f6?style=flat&logo=python&logoColor=white">
 <img alt="版本" src="https://img.shields.io/badge/Version-0.1.0-a855f7?style=flat">
@@ -57,7 +57,7 @@ pass@1 从 **71.07% 提升至 89.58%，增加 18.51 个百分点**。论文同�
 | **UC：低置信度、正确** | 脆弱的成功 | 优先诊断，并保留反思 |
 | **UW：低置信度、错误** | 已识别的不确定性或失败 | 优先诊断，并保留反思 |
 
-当前命令行流程使用可选的用户或业务 **accepted/rejected** 反馈。未反馈的交互保持“未判定”，
+命令行支持可选的用户或业务 **accepted/rejected** 反馈。未反馈的交互保持“未判定”，
 不会因为置信度低就被认定为错误。基础设施故障单独记录。
 
 ### 3. 轨迹分析：从局部证据到共性问题
@@ -84,7 +84,7 @@ pass@1 从 **71.07% 提升至 89.58%，增加 18.51 个百分点**。论文同�
 
 ## 实验结果
 
-以下表格与图片来自**提供的论文稿件**，与本仓库的离线演示和软件测试分别报告。
+以下表格与图片展示 **EvoGroup 论文**中的实验结果。评测设置与结果来源见[论文说明](docs/paper.md)。
 
 ### EverMemBench
 
@@ -130,7 +130,7 @@ pass@1 从 **71.07% 提升至 89.58%，增加 18.51 个百分点**。论文同�
 上图保留论文原始组件消融图，比较单个演化组件替换初始 Harness 后的表现。
 该设置下，工具和 prompt 的单项增益最大。过程消融还表明，移除 APD 或归桶分析会降低表现，
 而轨迹筛选在已测试设置中的收益有限。
-图表出处及稿件内的版本差异见[论文说明](docs/paper.md#source-notes)。
+图表详情及数据来源见[结果来源](docs/paper.md#source-notes)。
 
 ## 快速开始
 
@@ -215,17 +215,17 @@ EvoG/
 │   ├── providers.py          # 模型调用
 │   └── prompts/              # 交互、反思、分析、综合与演化
 ├── docs/                     # 论文说明、架构与配置
-│   └── assets/               # 从论文导出的图片
+│   └── assets/               # 框架图与消融结果图
 ├── examples/                 # 合成消息与命令行演示
 ├── tests/                    # 无付费模型调用的回归检查
 └── .github/workflows/ci.yml   # 检查、测试与构建
 ```
 
-## Benchmark 适配
+## Benchmark 评测
 
-项目已把旧 AHE `group_bench` 的数据适配和官方 judge 规则迁移到 CLI，支持 EverMemBench
-与 GroupMemBench。gold answer 只在评测侧使用，每道题拥有独立 memory session；可直接复用
-旧仓库的 split 文件。详见 [benchmark 指南](docs/benchmarks.md)。
+EvoG 支持 **EverMemBench** 与 **GroupMemBench**，提供官方评分规则、按题目 ID 筛选、
+逐题独立记忆会话与候选版本的配对验证。标准答案仅用于评测。
+数据准备和评测命令详见 [benchmark 指南](docs/benchmarks.md)。
 
 ```bash
 uv run evog benchmark list evermembench --data-root /path/to/EverMemBench --topic 01 --limit 2
@@ -238,7 +238,7 @@ uv run evog benchmark cycle groupmembench --data-root /path/to/GroupMemBench-mai
 - [论文说明与结果来源](docs/paper.md)
 - [架构与运行边界](docs/architecture.md)
 - [部署配置](docs/configuration.md)
-- [从 AHE 派生项目迁移](docs/migration.md)
+- [Benchmark 评测](docs/benchmarks.md)
 - [版本验证记录](docs/release-validation.md)
 - [贡献指南](CONTRIBUTING.md) · [安全说明](SECURITY.md)
 
@@ -252,8 +252,6 @@ uv build
 私有消息、轨迹与反馈保存在 Git 忽略的 `.evog/` 中。
 引用检查验证来源已送达模型，语义正确性仍需验证；实际模型端点和业务质量需要部署时检查。
 
-## 致谢与许可
+## 许可
 
-研究项目基于 [Agentic Harness Engineering（AHE）](https://arxiv.org/abs/2604.25850) 发展。
-文档组织参考 AHE 与 [HarnessX](https://github.com/Darwin-Agent/HarnessX)。
-来源署名保留在 [NOTICE](NOTICE) 中，项目采用 [MIT](LICENSE) 许可。
+EvoG 采用 [MIT](LICENSE) 许可，第三方许可声明见 [NOTICE](NOTICE)。

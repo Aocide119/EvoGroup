@@ -179,9 +179,9 @@ def test_source_date_coordinates_are_unique_and_timezone_is_explicit(ever_root):
     assert corpus.messages[0].metadata["assumed_timezone"] == "Asia/Shanghai"
 
 
-def test_old_episode_filter_and_multiple_choice_options(ever_root, tmp_path):
+def test_episode_filter_and_multiple_choice_options(ever_root, tmp_path):
     split = tmp_path / "ids.txt"
-    split.write_text("# old AHE format\nMA_C_Top01_001\n", encoding="utf-8")
+    split.write_text("# Episode selection\nMA_C_Top01_001\n", encoding="utf-8")
     rows = load_episodes("evermembench", ever_root, episode_file=split)
     assert len(rows) == 1 and rows[0].options == {"A": "January 12", "B": "January 15"}
     assert "Options:" in rows[0].prompt()

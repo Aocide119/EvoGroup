@@ -75,7 +75,9 @@ def parser() -> argparse.ArgumentParser:
     selection.add_argument("--limit", type=int, default=2, help="Number of questions (default 2)")
     selection.add_argument("--all", action="store_true", help="Run every selected question")
     benchmark.add_argument(
-        "--episode-file", type=Path, help="Old AHE/ASB episode IDs, one per line"
+        "--episode-file",
+        type=Path,
+        help="Episode IDs, one per line; blank lines and # comments ignored",
     )
     benchmark.add_argument(
         "--validation-episode-file", type=Path, help="Disjoint held-out IDs for cycle validation"

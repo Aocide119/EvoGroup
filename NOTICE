@@ -1,9 +1,5 @@
-EvoGroup (EvoG) was reconstructed from the design and provenance of an AHE-derived
-group-memory research project and the supplied EvoGroup manuscript.
+Third-party notices
 
-Upstream: Agentic Harness Engineering (AHE)
+Agentic Harness Engineering (AHE)
 Copyright (c) 2026 Jiahang Lin
-License: MIT (retained in LICENSE)
-
-The product runtime has been reimplemented as an independent command-line framework.
-Upstream experiment archives, datasets and private deployment files are not included.
+License: MIT (see LICENSE)

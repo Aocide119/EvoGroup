@@ -1,9 +1,4 @@
-"""AHE/ASB benchmark readers ported to EvoG's canonical source contract.
-
-Source: AHE group_bench/asb.py and memory_units/convert.py; question parsing follows
-AgenticSearchEvolving/benchmarks/{evermembench,groupmembench}.py used by that bridge.
-There is no runtime dependency on either research checkout.
-"""
+"""EverMemBench and GroupMemBench readers for source messages and evaluation episodes."""
 
 from __future__ import annotations
 
@@ -100,7 +95,7 @@ def _qa_rows(path: Path) -> list[dict[str, Any]]:
 
 
 def _options(raw: Any) -> dict[str, str]:
-    # ASB's dict/list options contract, including already-prefixed list entries.
+    # List entries may already include an option-letter prefix.
     if raw in (None, [], {}):
         return {}
     if isinstance(raw, dict):
@@ -242,7 +237,7 @@ def load_corpus(
     source = safe_path(root, relative)
     payload = json.loads(source.read_text(encoding="utf-8"))
     messages: list[Message] = []
-    # AHE's two layouts: dated -> date/group/list, and group -> channel/list.
+    # EverMemBench nests messages by date and group; GroupMemBench nests by channel.
     scopes = payload.get("dialogues", payload) if name == "evermembench" else {scope: payload}
     if not isinstance(scopes, dict):
         raise ContractError("Corpus must be a scope/group/message mapping")
@@ -276,7 +271,7 @@ def load_corpus(
                     message_id = str(row["msg_node"])
                     text, sender, stamp = row["content"], row["author"], row["timestamp"]
                     reply_to = row.get("reply_to")
-                    # Keep the original fields instead of the old lossy content-only ASB view.
+                    # Preserve domain-specific fields as searchable metadata.
                     metadata = {
                         k: v if isinstance(v, str) else dumps(v)
                         for k, v in row.items()

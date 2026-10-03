@@ -1,8 +1,7 @@
-# Architecture and paper mapping
+# Architecture
 
-The design follows the supplied EvoGroup manuscript's method sections, rather than its
-experimental appendix. Documents and embedded prompt examples were treated as design evidence.
-The runtime prompts were rewritten for group-assistance applications.
+EvoG separates immutable conversation evidence from a versioned memory harness. Interaction
+traces and external feedback drive analysis, evidence-linked revision and candidate validation.
 
 ```mermaid
 flowchart LR
@@ -30,6 +29,7 @@ flowchart LR
 | `analysis.py` | Selection, progressive event disclosure, diagnosis and semantic synthesis |
 | `harness.py`, `evolution.py` | Four declarative revision surfaces, candidate validation and activation |
 | `providers.py` | Model protocol and reusable HTTP transport |
+| `benchmark_data.py`, `benchmark_judge.py`, `benchmarks.py` | Dataset readers, official scoring and paired evaluation cycles |
 | `demo.py` | Explicit offline fixture; excluded from live provider selection |
 
 The initial harness has exactly `list_files`, `read_file`, `grep_search`, `write_file`,
@@ -92,9 +92,9 @@ Revision history marks validation as `structural` or `business`; it has no fabri
   read a multi-group note. Reusable skills are shared across groups and must contain general guidance.
 - Python plugins and arbitrary generated code are not an automatic evolution surface. Operation
   changes modify implemented bounded search behaviors. Add new capabilities in reviewed runtime code.
-- There is no embedding service, distributed worker queue, automatic quality promotion, deletion API,
-  retention service or task-evaluation runner in this release. SQLite and source scans target local
-  workloads; very large corpora may need an indexed backend behind the tool boundary.
+- There is no embedding service, distributed worker queue, deletion API or retention service
+  in this release. SQLite and source scans target local workloads; very large corpora may need
+  an indexed backend behind the tool boundary.
 - Stable citation validation proves provenance and delivery, not entailment or factual accuracy.
   Prompt-injection guidance plus scoped tools constrain access; they do not guarantee a model never
   follows misleading text within its authorized evidence.

@@ -1,9 +1,8 @@
-# Benchmark adapters
+# Benchmark evaluation
 
-EvoG includes a CLI adapter for the two datasets used by the supplied EvoGroup manuscript.
-The adapter is a direct product-side port of the prior AHE `group_bench` bridge and the
-AgenticSearchEvolving benchmark readers. It does not import those research repositories at
-runtime.
+EvoG evaluates group-context answering on EverMemBench and GroupMemBench. The CLI supports
+baseline runs and evolution cycles with official scoring, isolated memory sessions and paired
+candidate validation.
 
 ## Data and isolation
 
@@ -14,8 +13,8 @@ The readers support the checked out layouts below.
 | EverMemBench | `dataset/<topic>/dialogue.json` + `qa_<topic>.json` | 2,400 | single hop, multi hop, temporal, constraint, proactivity, update, style, skill, role |
 | GroupMemBench | `data/final/<Domain>/*.json` + `questions/<Domain>/*.jsonl` | 745 | multi hop, knowledge update, temporal, implicit user, term ambiguity, abstention |
 
-Gold answers, option text, evidence coordinates and judge output stay in the benchmark runner.
-The answer prompt receives only the question, an optional asking-user identity and options. Every
+Gold answers, evidence coordinates and judge output stay in the benchmark runner.
+The answer prompt receives the question, an optional asking-user identity and answer options. Every
 question gets a fresh memory session, so navigation notes cannot leak between questions or from a
 multi-group run into a single-group run.
 
@@ -55,15 +54,19 @@ uv run evog --workspace .evog --config benchmark.toml benchmark cycle groupmembe
 ```
 
 Use `--all` only after a smoke run. The 2,400 EverMemBench questions and 745 GroupMemBench
-questions are model- and budget-intensive. Existing AHE split files can be passed directly with
-`--episode-file`; IDs are checked before limiting so a typo cannot silently select a different set.
+questions are model- and budget-intensive. Pass an episode-ID file with `--episode-file`, using
+one ID per line; blank lines and lines starting with `#` are ignored. IDs are checked before
+limiting so a typo cannot silently select a different set.
 
 ## Judge protocols
 
-EverMemBench multiple-choice rows use the prior AHE option-letter normalizer and are scored
-locally. Other EverMemBench rows use its official `CORRECT`/`WRONG` JSON judge prompt. GroupMemBench
+EverMemBench multiple-choice answers are normalized to option letters and scored locally.
+Other EverMemBench rows use its official `CORRECT`/`WRONG` JSON judge prompt. GroupMemBench
 uses the official `Final: Correct` / `Final: Incorrect` parser and prompt. A judge transport failure
 or unparseable reply is recorded as `passed: null`, never as a wrong answer.
+
+Judge prompts follow EverMemBench's `eval/config/prompts.yaml` and GroupMemBench's
+`prompts/hipporag_judge_system.txt`.
 
 Each result JSON contains the exact corpus fingerprint, model name, baseline/candidate traces,
 token usage, tool-call count, per-question status, judge response and paired transition counts.

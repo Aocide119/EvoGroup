@@ -221,7 +221,7 @@ def run(
         progress(
             f"Imported {scope}: {len(corpus.messages)} messages / {len(corpus.group_ids)} groups"
         )
-    # AHE source lines exposed message metadata. Preserve that view for this benchmark harness.
+    # Include source attribution and domain metadata in the evaluation harness.
     active = app.store.harness()
     if not active.representation.include_metadata:
         contents = dict(active.contents)

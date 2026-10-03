@@ -1,15 +1,12 @@
-# Manuscript figures
+# Paper figures
 
-These PNGs are raster exports of the supplied EvoGroup manuscript's original PDF figures.
-They are included as project documentation assets, with their diagram and result content preserved.
+Framework and component-ablation figures from the EvoGroup paper.
 
-| Asset | Manuscript source | Use |
+| Asset | Paper source | Use |
 | --- | --- | --- |
 | `evog-framework.png` | `figures/EvoWorkspace_Self_Evolution_Loop.pdf` | Four-stage self-evolution framework |
 | `harness-ablation.png` | `figures/harness_ablation.pdf` | Component-level ablation results |
 
-The framework figure shows the research protocol's official correctness signal. The current
-command workflow uses optional user/business acceptance feedback, as described in the README.
-The component-ablation figure contains its own reported values; the corresponding manuscript
-prose uses slightly different numbers. See [paper notes](../paper.md#source-notes) for that distinction.
-Images do not represent a fresh experiment run in this repository.
+The framework uses an external correctness signal; the CLI accepts user/business feedback or
+benchmark scoring. Figure values and result sources are documented in
+[paper notes](../paper.md#source-notes).

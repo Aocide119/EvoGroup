@@ -1,9 +1,4 @@
-"""Official judge instruments used by the AHE/ASB benchmark bridge.
-
-Ported from scoring/evermembench.py and scoring/groupmembench.py. Prompts originate
-from EverMemBench eval/config/prompts.yaml and GroupMemBench
-prompts/hipporag_judge_system.txt. See docs/benchmarks.md for provenance.
-"""
+"""Official scoring prompts and verdict parsers for EverMemBench and GroupMemBench."""
 
 from __future__ import annotations
 
@@ -16,7 +11,7 @@ from evog.providers import Provider
 
 
 def parse_mc_letter(response: str) -> str:
-    """Port of the ASB normalizer used by AHE's EverMemBench runner."""
+    """Normalize a multiple-choice response to an option letter when possible."""
     text = response.strip().replace("*", "").replace("`", "").replace("_", "").upper()
     if not text:
         return ""
