@@ -12,6 +12,8 @@ from pydantic import BaseModel, ValidationError
 
 from evog import __version__
 from evog.app import Application
+from evog.benchmark_data import load_episodes, resolve_root
+from evog.benchmarks import run as run_benchmark
 from evog.config import Settings
 from evog.demo import DEMO_MESSAGES, DemoProvider
 from evog.errors import EvoGError
@@ -55,6 +57,34 @@ def parser() -> argparse.ArgumentParser:
     export.add_argument("directory", type=Path)
     sub.add_parser(
         "demo", help="Run an explicit offline fixture through the complete evolution loop"
+    )
+    benchmark = sub.add_parser("benchmark", help="Run the paper benchmark adapters")
+    benchmark.add_argument("action", choices=("list", "run", "cycle"))
+    benchmark.add_argument("name", choices=("evermembench", "groupmembench"))
+    benchmark.add_argument(
+        "--data-root", type=Path, help="Dataset checkout (or corresponding ROOT env)"
+    )
+    benchmark.add_argument(
+        "--topic", action="append", dest="topics", help="EverMemBench topic; repeat to combine"
+    )
+    benchmark.add_argument(
+        "--domain", action="append", dest="domains", help="GroupMemBench domain; repeat to combine"
+    )
+    benchmark.add_argument("--question-type", action="append", dest="question_types")
+    selection = benchmark.add_mutually_exclusive_group()
+    selection.add_argument("--limit", type=int, default=2, help="Number of questions (default 2)")
+    selection.add_argument("--all", action="store_true", help="Run every selected question")
+    benchmark.add_argument(
+        "--episode-file", type=Path, help="Old AHE/ASB episode IDs, one per line"
+    )
+    benchmark.add_argument(
+        "--validation-episode-file", type=Path, help="Disjoint held-out IDs for cycle validation"
+    )
+    benchmark.add_argument(
+        "--timezone", default="UTC", help="Assumed IANA timezone for naive source timestamps"
+    )
+    benchmark.add_argument(
+        "--output", type=Path, help="Private results JSON; defaults inside workspace"
     )
     return root
 
@@ -131,6 +161,58 @@ def main(argv: list[str] | None = None) -> int:
                         "activated": activated.model_dump(mode="json") if activated else None,
                     }
                 )
+            elif command == "benchmark":
+                root = resolve_root(args.name, args.data_root)
+                if args.name == "evermembench" and args.domains:
+                    raise ValueError("Use --topic for EverMemBench")
+                if args.name == "groupmembench" and args.topics:
+                    raise ValueError("Use --domain for GroupMemBench")
+                selected = dict(
+                    topics=args.topics,
+                    domains=args.domains,
+                    question_types=args.question_types,
+                    limit=None if args.all else args.limit,
+                    episode_file=args.episode_file,
+                )
+                if args.action == "list":
+                    episodes = load_episodes(args.name, root, **selected)
+                    emit(
+                        [
+                            {
+                                "episode_id": episode.episode_id,
+                                "scope": episode.scope,
+                                "question_type": episode.question_type,
+                                "has_options": bool(episode.options),
+                            }
+                            for episode in episodes
+                        ]
+                    )
+                else:
+                    from uuid import uuid4
+
+                    output = args.output or app.store.workspace / "benchmarks" / (
+                        uuid4().hex + ".json"
+                    )
+                    result = run_benchmark(
+                        app,
+                        args.name,
+                        root,
+                        output=output,
+                        **selected,
+                        assumed_timezone=args.timezone,
+                        cycle=args.action == "cycle",
+                        validation_episode_file=args.validation_episode_file,
+                        progress=lambda message: print(message, file=sys.stderr, flush=True),
+                    )
+                    emit(
+                        {
+                            "benchmark": args.name,
+                            "metrics": result["baseline"]["metrics"],
+                            "evolution_status": result.get("evolution_status"),
+                            "comparison": result.get("comparison"),
+                            "output": str(output.resolve()),
+                        }
+                    )
         return 0
     except (EvoGError, ValidationError, OSError, ValueError) as exc:
         detail = (

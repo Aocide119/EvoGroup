@@ -167,6 +167,8 @@ class Store:
                 "INSERT OR IGNORE INTO revisions VALUES (?, ?, ?, ?, ?)",
                 (harness.id, dumps(harness.contents), parent_id, plan_id, validation),
             )
+            if validation == "business":
+                db.execute("UPDATE revisions SET validation='business' WHERE id=?", (harness.id,))
             db.execute("UPDATE state SET value=? WHERE key='active_revision'", (harness.id,))
 
     def rollback(self, revision_id: str) -> None:

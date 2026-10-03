@@ -75,7 +75,14 @@ def tool_definitions() -> list[dict[str, Any]]:
 
 
 class Tools:
-    def __init__(self, store: Store, harness: Harness, group_ids: list[str]):
+    def __init__(
+        self,
+        store: Store,
+        harness: Harness,
+        group_ids: list[str],
+        *,
+        memory_session: str | None = None,
+    ):
         if not group_ids:
             raise ContractError("Explicit group scope is required")
         known = {row["group_id"] for row in store.groups()}
@@ -90,6 +97,13 @@ class Tools:
             self.group_paths[path] = group
             self.context[path] = [self._record(message) for message in store.messages(group)]
         self.memory_root = store.workspace / "memory" / fingerprint(sorted(set(group_ids)))
+        if memory_session is not None:
+            self.memory_root = (
+                store.workspace
+                / "sessions"
+                / fingerprint({"session": memory_session, "groups": sorted(set(group_ids))})
+                / "memory"
+            )
         safe_path(store.workspace, self.memory_root.relative_to(store.workspace).as_posix())
         self.memory_root.mkdir(parents=True, exist_ok=True)
         self.delivered_refs: set[str] = set()

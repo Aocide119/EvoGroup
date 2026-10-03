@@ -237,6 +237,18 @@ EvoG/
 └── .github/workflows/ci.yml   # lint, tests and packaging
 ```
 
+## Benchmark adapters
+
+The paper datasets are available through the CLI adapters. The previous AHE benchmark bridge was
+ported into [the benchmark guide](docs/benchmarks.md), including both official judge protocols,
+old split-file IDs, per-question memory isolation and paired candidate validation.
+
+```bash
+uv run evog benchmark list evermembench --data-root /path/to/EverMemBench --topic 01 --limit 2
+uv run evog benchmark cycle groupmembench --data-root /path/to/GroupMemBench-main \
+  --domain Finance --question-type multi_hop --limit 2 --output results.json
+```
+
 ## Documentation and Development
 
 - [Paper notes and result sources](docs/paper.md)

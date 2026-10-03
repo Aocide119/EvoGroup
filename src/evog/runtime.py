@@ -57,11 +57,13 @@ def interact(
     question: str,
     group_ids: list[str],
     harness: Harness | None = None,
+    *,
+    memory_session: str | None = None,
 ) -> Answer:
     if not question.strip() or len(question) > 10000:
         raise ContractError("Question must contain 1–10000 characters")
     harness = harness or store.harness()
-    tools = Tools(store, harness, group_ids)
+    tools = Tools(store, harness, group_ids, memory_session=memory_session)
     run_id = uuid4().hex
     store.start_run(run_id, harness.id, question, sorted(set(group_ids)))
     messages: list[dict[str, Any]] = [

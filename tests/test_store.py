@@ -87,7 +87,7 @@ def test_missing_run_is_explicit(store):
 @pytest.mark.parametrize(
     "patch",
     [
-        {"metadata": {"key": "x" * 1001}},
+        {"metadata": {"key": "x" * 4001}},
         {"text": "   "},
         {"sender": " "},
         {"reply_to": "other/message"},

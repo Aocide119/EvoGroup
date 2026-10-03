@@ -221,6 +221,18 @@ EvoG/
 └── .github/workflows/ci.yml   # 检查、测试与构建
 ```
 
+## Benchmark 适配
+
+项目已把旧 AHE `group_bench` 的数据适配和官方 judge 规则迁移到 CLI，支持 EverMemBench
+与 GroupMemBench。gold answer 只在评测侧使用，每道题拥有独立 memory session；可直接复用
+旧仓库的 split 文件。详见 [benchmark 指南](docs/benchmarks.md)。
+
+```bash
+uv run evog benchmark list evermembench --data-root /path/to/EverMemBench --topic 01 --limit 2
+uv run evog benchmark cycle groupmembench --data-root /path/to/GroupMemBench-main \
+  --domain Finance --question-type multi_hop --limit 2 --output results.json
+```
+
 ## 文档与开发
 
 - [论文说明与结果来源](docs/paper.md)

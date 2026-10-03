@@ -31,9 +31,9 @@ class Message(Record):
     @field_validator("metadata")
     @classmethod
     def bounded_metadata(cls, value: dict[str, str]) -> dict[str, str]:
-        if any(len(key) > 128 or len(item) > 1000 for key, item in value.items()):
+        if any(len(key) > 128 or len(item) > 4000 for key, item in value.items()):
             raise ValueError("metadata keys and values exceed their size limits")
-        if len(str(value)) > 8000:
+        if len(str(value)) > 16000:
             raise ValueError("metadata exceeds its total size limit")
         return value
 

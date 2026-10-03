@@ -58,6 +58,16 @@ def test_create_exclusive_write_replace_and_scope_isolation(store):
     assert "memory/notes.md" not in other.files()
 
 
+def test_question_session_notes_remain_bound_to_the_authorized_groups(store):
+    first = Tools(store, store.harness(), ["demo-team"], memory_session="same-session")
+    first.execute("create_file", {"path": "memory/note.md", "content": "navigation"})
+    second = Tools(store, store.harness(), ["demo-team"], memory_session="another-question")
+    assert "memory/note.md" not in second.files()
+    store.ingest(iter([Message.model_validate({**DEMO_MESSAGES[0], "group_id": "another"})]))
+    wider = Tools(store, store.harness(), ["demo-team", "another"], memory_session="same-session")
+    assert "memory/note.md" not in wider.files()
+
+
 def test_note_symlink_escape(store, tmp_path):
     tools = tools_for(store)
     outside = tmp_path / "outside.md"

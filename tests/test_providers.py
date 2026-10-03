@@ -109,3 +109,16 @@ def test_provider_config_requires_credentials_and_clean_api_root():
         ChatProvider(
             Settings(base_url="https://user:password@example.com/v1", model="x", api_key="x")
         )
+
+
+def test_provider_accepts_host_url_and_optional_reasoning_setting():
+    def respond(request):
+        assert str(request.url) == "https://provider.example/v1/chat/completions"
+        assert json.loads(request.content)["reasoning_effort"] == "none"
+        return httpx.Response(200, json={"choices": [{"message": {"content": "{}"}}]})
+
+    with httpx.Client(transport=httpx.MockTransport(respond)) as client:
+        configured = settings().model_copy(
+            update={"base_url": "https://provider.example/", "reasoning_effort": "none"}
+        )
+        assert ChatProvider(configured, client=client).complete([], []).content == "{}"

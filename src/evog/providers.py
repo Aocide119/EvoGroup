@@ -51,6 +51,9 @@ class ChatProvider:
         ):
             raise ProviderError("Base URL must be an HTTP(S) API root without credentials or query")
         self.settings = settings
+        self.api_root = settings.base_url.rstrip("/")
+        if parsed.path in ("", "/"):
+            self.api_root += "/v1"
         self._owns_client = client is None
         self.client = client or httpx.Client(timeout=settings.request_timeout)
 
@@ -58,14 +61,16 @@ class ChatProvider:
         payload: dict[str, Any] = {
             "model": self.settings.model,
             "messages": messages,
-            "max_tokens": self.settings.max_output_tokens,
+            "max_completion_tokens": self.settings.max_output_tokens,
         }
         if tools:
             payload["tools"] = tools
+        if self.settings.reasoning_effort is not None:
+            payload["reasoning_effort"] = self.settings.reasoning_effort
         for attempt in range(3):
             try:
                 response = self.client.post(
-                    self.settings.base_url.rstrip("/") + "/chat/completions",
+                    self.api_root + "/chat/completions",
                     headers={"Authorization": f"Bearer {self.settings.api_key.get_secret_value()}"},
                     json=payload,
                     timeout=self.settings.request_timeout,

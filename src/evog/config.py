@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import tomllib
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr
 
@@ -15,6 +16,7 @@ class Settings(Record):
     base_url: str = ""
     model: str = ""
     api_key: SecretStr = SecretStr("")
+    reasoning_effort: Literal["none", "minimal", "low", "medium", "high", "xhigh"] | None = None
     max_turns: int = Field(default=16, ge=3, le=80)
     max_tool_calls: int = Field(default=32, ge=1, le=100)
     max_output_tokens: int = Field(default=4096, ge=256, le=32000)

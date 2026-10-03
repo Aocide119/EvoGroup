@@ -1,0 +1,12 @@
+# Copy and adjust this file for an OpenAI-compatible endpoint.
+# Keep the API key in EVOG_API_KEY; it is never stored in this file.
+base_url = "https://api.huanling.icu"
+model = "gpt-5.5"
+reasoning_effort = "none"
+request_timeout = 90
+max_turns = 16
+max_tool_calls = 32
+max_output_tokens = 8192
+analysis_max_runs = 30
+analysis_turns = 10
+max_context_chars = 240000
